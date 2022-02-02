@@ -2,6 +2,15 @@ import all_words, stages
 import random
 import pickle
 import time
+import os
+
+def clearConsole():
+    command = 'clear'
+    if os.name in ('nt', 'dos'):  # If Machine is running on Windows, use cls
+        command = 'cls'
+    os.system(command)
+
+
 
 stages = stages.stages
 
@@ -33,9 +42,18 @@ print(logo)
 random.shuffle(all_word_list) # Not necessary
 
 user = input(f'{greet()}, Please enter your name...\t').title()
+
+def play_again(choice):
+    clearConsole()
+    if choice.lower() == 'y':
+        play_game()
+    else:
+        print(f'Goodbye {user}, it was fun playing with you\n\n\n')
+        
+        
 def play_game():
-    
-    difficulty_level = input(f'Hello {user}, Please select the lenght of words from 6 (easy mode) to 24 (legend mode)\t')
+    # choose difficulty level
+    difficulty_level = input(f'\nHello {user}, Please select the lenght of words from 6 (easy mode) to 24 (legend mode)\t')
     difficulty_check = difficulty_level.isdigit()
 
     if difficulty_check == True:
@@ -52,19 +70,20 @@ def play_game():
             if int(difficulty_level) < 6 or int(difficulty_level) > 24:
                 difficulty_check = False
 
+    # create a list of words based on difficulty level 
     word_list = []
 
     for word in all_word_list:
         if len(word) == int(difficulty_level):
             word_list.append(word)
 
-    print('Difficulty', int(difficulty_level))
+    print('\nDifficulty', int(difficulty_level))
     print('All Word List' ,len(all_word_list))
     print('Word List' ,len(word_list)) 
 
     chosen_word = random.choice(word_list).lower()
 
-    print(chosen_word)
+    # print(chosen_word)
 
 
     game_over = False
@@ -91,20 +110,20 @@ def play_game():
                 count+=1
 
             print(answer)
+
             if guess not in chosen_word:
                 lives -= 1
                 print(f'Wrong guess {user}, sorry you lose a life and you have {lives} lives left')
                 print(stages[lives])
                 if lives == 0:
-                    print(f'Sorry {user}, you lost, the correct word is {chosen_word}')
+                    print(f'Sorry {user}, you lost, the correct word is {chosen_word}, do you want to play again? choose "Y" for yes and any other key for no')
+                    rematch = input('>>>')
+                    play_again(rematch)
 
             if '_' not in answer:
                 print(f'Congratulations {user}, you have won this round, do you want to play again? choose "Y" for yes and any other key for no')
                 rematch = input('>>>')
-                if rematch.lower() == 'y':
-                    play_game()
-                else:
-                    break
+                play_again(rematch)
         else:
             print(f'{user}, you have already guessed "{guess}", please make another guess')
             
